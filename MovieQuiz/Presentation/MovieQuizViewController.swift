@@ -44,13 +44,34 @@ final class MovieQuizViewController: UIViewController {
         imageView.image = quizstep.image
         textLabel.text = quizstep.question
     }
+    
+    private func showAnswerResult(isCorrect: Bool) {
+        imageView.layer.masksToBounds = true // даём разрешение на рисование рамки
+        imageView.layer.borderWidth = 1 // толщина рамки
+        imageView.layer.cornerRadius = 6
+        if isCorrect == true { imageView.layer.borderColor = UIColor.ypGreen.cgColor } else {imageView.layer.borderColor = UIColor.ypRed.cgColor}
+        
+    }
 
+    
+    @IBAction func yesButtonClicked(_ sender: Any) {
+        let givenAnswer = true
+        showAnswerResult(isCorrect: givenAnswer == quiestions[currentQuestionIndex].correctAnswer)
+    }
+    
+    
+    @IBAction func noButtonClicked(_ sender: Any) {
+        let givenAnswer = false
+        showAnswerResult(isCorrect: givenAnswer == quiestions[currentQuestionIndex].correctAnswer)
+    }
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         let currentQuestion = quiestions[currentQuestionIndex]
         show(quizstep: convert(model: currentQuestion))
+        
+        
     }
 }
 
