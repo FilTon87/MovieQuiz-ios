@@ -18,7 +18,7 @@ final class MovieQuizViewController: UIViewController {
       let questionNumber: String
     }
     
-    private let quiestions = [
+    private let questions = [
         QuizQuestion(image: "The Godfather", test: "Рейтинг этого фильма больше чем 6?", correctAnswer: true),
         QuizQuestion(image: "The Dark Knight", test: "Рейтинг этого фильма больше чем 6?", correctAnswer: true),
         QuizQuestion(image: "Kill Bill", test: "Рейтинг этого фильма больше чем 6?", correctAnswer: true),
@@ -35,7 +35,7 @@ final class MovieQuizViewController: UIViewController {
     private var correctAnswers = 0
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
-        let questionStep = QuizStepViewModel(image: UIImage(named: "\(model.image)") ?? UIImage(), question: "\(model.test)", questionNumber: "\(currentQuestionIndex + 1) / \(quiestions.count)")
+        let questionStep = QuizStepViewModel(image: UIImage(named: "\(model.image)") ?? UIImage(), question: "\(model.test)", questionNumber: "\(currentQuestionIndex + 1) / \(questions.count)")
         return questionStep
     }
     
@@ -51,24 +51,35 @@ final class MovieQuizViewController: UIViewController {
         imageView.layer.cornerRadius = 6
         if isCorrect == true { imageView.layer.borderColor = UIColor.ypGreen.cgColor } else {imageView.layer.borderColor = UIColor.ypRed.cgColor}
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { self.showNextQuestionOrResults() }
+    }
+    
+    private func showNextQuestionOrResults() {
+        imageView.layer.borderColor = UIColor.ypWhite.cgColor
+        if currentQuestionIndex == questions.count - 1 {
+        } else {
+            currentQuestionIndex += 1
+            let nextQuestion = questions[currentQuestionIndex]
+            show(quizstep: convert(model: nextQuestion))
+        }
     }
 
     
     @IBAction func yesButtonClicked(_ sender: Any) {
         let givenAnswer = true
-        showAnswerResult(isCorrect: givenAnswer == quiestions[currentQuestionIndex].correctAnswer)
+        showAnswerResult(isCorrect: givenAnswer == questions[currentQuestionIndex].correctAnswer)
     }
     
     
     @IBAction func noButtonClicked(_ sender: Any) {
         let givenAnswer = false
-        showAnswerResult(isCorrect: givenAnswer == quiestions[currentQuestionIndex].correctAnswer)
+        showAnswerResult(isCorrect: givenAnswer == questions[currentQuestionIndex].correctAnswer)
     }
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        let currentQuestion = quiestions[currentQuestionIndex]
+        let currentQuestion = questions[currentQuestionIndex]
         show(quizstep: convert(model: currentQuestion))
         
         
