@@ -53,8 +53,8 @@ final class MovieQuizViewController: UIViewController {
     
     private func showAnswerResult(isCorrect: Bool) {
         imageView.layer.masksToBounds = true // даём разрешение на рисование рамки
-        imageView.layer.borderWidth = 1 // толщина рамки
-        imageView.layer.cornerRadius = 6
+        imageView.layer.borderWidth = 8
+        imageView.layer.cornerRadius = 20
         
         if isCorrect == true {
             imageView.layer.borderColor = UIColor.ypGreen.cgColor
@@ -69,7 +69,7 @@ final class MovieQuizViewController: UIViewController {
     private func showNextQuestionOrResults() {
         imageView.layer.borderColor = UIColor.ypWhite.cgColor
         if currentQuestionIndex == questions.count - 1 {
-            show(quizresult: QuizResultsViewModel(title: "Этот раунд окончен!", text: "Ваш результат \(correctAnswers) из 10", buttonText: "Сыграть еще раз"))
+            show(quizresult: QuizResultsViewModel(title: "Этот раунд окончен!", text: "Ваш результат \(correctAnswers)/10", buttonText: "Сыграть еще раз"))
         } else {
             currentQuestionIndex += 1
             let nextQuestion = questions[currentQuestionIndex]
