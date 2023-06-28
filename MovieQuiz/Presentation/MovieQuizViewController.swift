@@ -1,10 +1,16 @@
 import UIKit
 
 final class MovieQuizViewController: UIViewController {
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
 
     @IBOutlet weak private var imageView: UIImageView!
     @IBOutlet weak private var textLabel: UILabel!
     @IBOutlet weak private var counterLabel: UILabel!
+    @IBOutlet weak var noButton: UIButton!
+    @IBOutlet weak var yesButton: UIButton!
     
     struct QuizQuestion {
         let image: String
@@ -67,7 +73,9 @@ final class MovieQuizViewController: UIViewController {
     }
     
     private func showNextQuestionOrResults() {
-        imageView.layer.borderColor = UIColor.ypWhite.cgColor
+        yesButton.isEnabled = true
+        noButton.isEnabled = true
+        imageView.layer.borderWidth = 0
         if currentQuestionIndex == questions.count - 1 {
             show(quizresult: QuizResultsViewModel(title: "Этот раунд окончен!", text: "Ваш результат \(correctAnswers)/10", buttonText: "Сыграть еще раз"))
         } else {
@@ -97,12 +105,17 @@ final class MovieQuizViewController: UIViewController {
     @IBAction func yesButtonClicked(_ sender: Any) {
         let givenAnswer = true
         showAnswerResult(isCorrect: givenAnswer == questions[currentQuestionIndex].correctAnswer)
+        yesButton.isEnabled = false
+        noButton.isEnabled = false
+        
     }
     
     
     @IBAction func noButtonClicked(_ sender: Any) {
         let givenAnswer = false
         showAnswerResult(isCorrect: givenAnswer == questions[currentQuestionIndex].correctAnswer)
+        yesButton.isEnabled = false
+        noButton.isEnabled = false
     }
     
     // MARK: - Lifecycle
@@ -110,6 +123,7 @@ final class MovieQuizViewController: UIViewController {
         super.viewDidLoad()
         let currentQuestion = questions[currentQuestionIndex]
         show(quizstep: convert(model: currentQuestion))
+        imageView.layer.cornerRadius = 20
     }
 }
 
