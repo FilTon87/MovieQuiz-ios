@@ -9,6 +9,6 @@ import Foundation
 
 struct QuizQuestion {
     let image: String
-    let test: String
+    let text: String
     let correctAnswer: Bool
 }

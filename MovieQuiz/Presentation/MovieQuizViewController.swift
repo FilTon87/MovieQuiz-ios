@@ -12,12 +12,18 @@ final class MovieQuizViewController: UIViewController {
     @IBOutlet weak var noButton: UIButton!
     @IBOutlet weak var yesButton: UIButton!
     
-    
     private var currentQuestionIndex = 0
     private var correctAnswers = 0
     
+    private let questionsAmount: Int = 10
+    private let questionFactory: QuestionFactory = QuestionFactory()
+    private var currentQuestion: QuizQuestion?
+    
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
-        let questionStep = QuizStepViewModel(image: UIImage(named: "\(model.image)") ?? UIImage(), question: "\(model.test)", questionNumber: "\(currentQuestionIndex + 1) / \(questions.count)")
+        let questionStep = QuizStepViewModel(
+            image: UIImage(named: model.image) ?? UIImage(),
+            question: model.text,
+            questionNumber: "\(currentQuestionIndex + 1)/\(questionsAmount)")
         return questionStep
     }
     
@@ -48,12 +54,14 @@ final class MovieQuizViewController: UIViewController {
         yesButton.isEnabled = true
         noButton.isEnabled = true
         imageView.layer.borderWidth = 0
-        if currentQuestionIndex == questions.count - 1 {
+        if currentQuestionIndex == questionsAmount - 1 {
             show(quizresult: QuizResultsViewModel(title: "Этот раунд окончен!", text: "Ваш результат \(correctAnswers)/10", buttonText: "Сыграть еще раз"))
         } else {
             currentQuestionIndex += 1
-            let nextQuestion = questions[currentQuestionIndex]
-            show(quizstep: convert(model: nextQuestion))
+            if let nextQuestion = questionFactory.requestNextQuestion() {
+                currentQuestion = nextQuestion
+                show(quizstep: convert(model: nextQuestion))
+            }
         }
     }
     
@@ -67,8 +75,11 @@ final class MovieQuizViewController: UIViewController {
             guard let self = self else { return }
             self.currentQuestionIndex = 0
             self.correctAnswers = 0
-            let newRoundQuestion = self.questions[self.currentQuestionIndex]
-            self.show(quizstep: self.convert(model: newRoundQuestion))
+            if let newRoundQuestion = self.questionFactory.requestNextQuestion() {
+                self.currentQuestion = newRoundQuestion
+                self.show(quizstep: self.convert(model: newRoundQuestion))
+            }
+            
         }
             alert.addAction(action)
             self.present(alert, animated: true, completion: nil)
@@ -77,7 +88,8 @@ final class MovieQuizViewController: UIViewController {
     
     @IBAction func yesButtonClicked(_ sender: Any) {
         let givenAnswer = true
-        showAnswerResult(isCorrect: givenAnswer == questions[currentQuestionIndex].correctAnswer)
+        guard let currentQuestion = currentQuestion else { return }
+        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
         yesButton.isEnabled = false
         noButton.isEnabled = false
         
@@ -86,7 +98,8 @@ final class MovieQuizViewController: UIViewController {
     
     @IBAction func noButtonClicked(_ sender: Any) {
         let givenAnswer = false
-        showAnswerResult(isCorrect: givenAnswer == questions[currentQuestionIndex].correctAnswer)
+        guard let currentQuestion = currentQuestion else { return }
+        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
         yesButton.isEnabled = false
         noButton.isEnabled = false
     }
@@ -94,8 +107,12 @@ final class MovieQuizViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        let currentQuestion = questions[currentQuestionIndex]
-        show(quizstep: convert(model: currentQuestion))
+//        let currentQuestion = questions[currentQuestionIndex]
+//        show(quizstep: convert(model: currentQuestion))
+        if let firstQuestion = questionFactory.requestNextQuestion() {
+            currentQuestion = firstQuestion
+            show(quizstep: convert(model: firstQuestion))
+        }
         imageView.layer.cornerRadius = 20
     }
 }
