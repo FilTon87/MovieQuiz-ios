@@ -18,6 +18,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private let questionsAmount: Int = 10
     private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
+    private var alertPresenter: AlertPresenterProtocol?
     
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel(
@@ -55,28 +56,17 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         noButton.isEnabled = true
         imageView.layer.borderWidth = 0
         if currentQuestionIndex == questionsAmount - 1 {
-            show(quizresult: QuizResultsViewModel(title: "Этот раунд окончен!", text: "Ваш результат \(correctAnswers)/10", buttonText: "Сыграть еще раз"))
-        } else {
-            currentQuestionIndex += 1
-            questionFactory?.requestNextQuestion()
-        }
-    }
-    
-    private func show(quizresult: QuizResultsViewModel) {
-        let alert = UIAlertController(
-            title: quizresult.title,
-            message: quizresult.text,
-            preferredStyle: .alert)
-        
-        let action = UIAlertAction(title: quizresult.buttonText, style: .default) { [weak self] _ in
+        let finalScreen = AlertModel(title: "Этот раунд окончен!", message: "Ваш результат \(correctAnswers)/\(questionsAmount)", buttonText: "Сыграть еще раз", completion: { [weak self] _ in
             guard let self = self else { return }
             self.currentQuestionIndex = 0
             self.correctAnswers = 0
             self.questionFactory?.requestNextQuestion()
-            
+        })
+            alertPresenter?.showAlert(alertView: finalScreen)
+        } else {
+            currentQuestionIndex += 1
+            questionFactory?.requestNextQuestion()
         }
-            alert.addAction(action)
-            self.present(alert, animated: true, completion: nil)
     }
 
     
@@ -103,8 +93,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         super.viewDidLoad()
         imageView.layer.cornerRadius = 20
         questionFactory = QuestionFactory(delegate: self)
+        alertPresenter = AlertPresenter(delegate: self)
         questionFactory?.requestNextQuestion()
-        
     }
     
     // MARK: - QuestionFactoryDelegate
