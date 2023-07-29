@@ -121,7 +121,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         
         func getMovie(from jsonString: String) -> Movie? {
             var movie: Movie? = nil
-            do {
+            /*    do {
                 guard let data = jsonString.data(using: .utf8) else {return nil}
                 let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
                 
@@ -154,9 +154,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             } catch {
                 print("Faild to parse: \(jsonString)")
             }
-          return movie
+          return movie */
+            do {
+                guard let data = jsonString.data(using: .utf8) else {return nil}
+                let movie = try JSONDecoder().decode(Movie.self, from: data)
+            } catch {
+                print("Failed to parse: \(error.localizedDescription)")
+            }
+            return movie
         }
-        
     }
     
     // MARK: - QuestionFactoryDelegate
