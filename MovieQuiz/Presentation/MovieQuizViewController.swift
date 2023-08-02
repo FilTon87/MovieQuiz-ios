@@ -20,6 +20,8 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     private var currentQuestion: QuizQuestion?
     private var alertPresenter: AlertPresenterProtocol?
     
+    private var statisticService: StatisticService?
+    
     private func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel(
             image: UIImage(named: model.image) ?? UIImage(),
@@ -56,7 +58,20 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         noButton.isEnabled = true
         imageView.layer.borderWidth = 0
         if currentQuestionIndex == questionsAmount - 1 {
-        let finalScreen = AlertModel(title: "Этот раунд окончен!", message: "Ваш результат \(correctAnswers)/\(questionsAmount)", buttonText: "Сыграть еще раз", completion: { [weak self] _ in
+            statisticService?.store(correct: correctAnswers, total: questionsAmount)
+            guard let gamesCount = statisticService?.gamesCount else {return}
+            guard let bestGame = statisticService?.bestGame else {return}
+            guard let totalAccuracy = statisticService?.totalAccuracy else {return}
+        let finalScreen = AlertModel(
+            title: "Этот раунд окончен!",
+            message: """
+            Ваш результат \(correctAnswers)/\(questionsAmount),
+            Количество сыгранных квизов: \(gamesCount)
+            Рекорд: \(bestGame.correct)/\(bestGame.total) \(bestGame.date.dateTimeString)
+            Средняя точность: \(String(format: "%.2f", totalAccuracy))%
+            """,
+            buttonText: "Сыграть еще раз",
+            completion: { [weak self] _ in
             guard let self = self else { return }
             self.currentQuestionIndex = 0
             self.correctAnswers = 0
@@ -91,6 +106,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        statisticService = StatisticServiceImplementation()
         imageView.layer.cornerRadius = 20
         questionFactory = QuestionFactory(delegate: self)
         alertPresenter = AlertPresenter(delegate: self)
@@ -103,22 +119,6 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         jsonURL.appendPathComponent(fileName)
         let jsonString = try? String(contentsOf: jsonURL)
 
-//        do {
-//            let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-//           // print(json)
-//            let title = json?["title"]
-//            let year = json?["year"]
-//            let actorList = json?["actorList"] as? [Any]
-//
-//            for actor in actorList {
-//                if let actor = actor as? [String: Any] {
-//                    print(actor["asCharacter"])
-//                }
-//            }
-//        } catch {
-//            print("Failed to parse: \(jsonString)")
-//        }
-        
         func getMovie(from jsonString: String) -> Movie? {
             var movie: Movie? = nil
             /*    do {
@@ -166,15 +166,15 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     }
     
     // MARK: - QuestionFactoryDelegate
-func didReceiveNextQuestion(question: QuizQuestion?) {
-    guard let question = question else { return }
-    
-    currentQuestion = question
-    let viewModel = convert(model: question)
-    DispatchQueue.main.async { [weak self] in
-        self?.show(quizstep: viewModel)
+    func didReceiveNextQuestion(question: QuizQuestion?) {
+        guard let question = question else { return }
+        
+        currentQuestion = question
+        let viewModel = convert(model: question)
+        DispatchQueue.main.async { [weak self] in
+            self?.show(quizstep: viewModel)
+        }
     }
-}
 }
 
 /*
