@@ -50,8 +50,8 @@ struct Movie: Codable {
 }
 
 enum CodingKeys: CodingKey {
-   case id, title, year, image, releaseDate, runtimeMins, directors, actorList
- }
+    case id, title, year, image, releaseDate, runtimeMins, directors, actorList
+}
 
 enum ParseError: Error {
     case yearFailure

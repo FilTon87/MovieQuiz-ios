@@ -5,7 +5,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-
+    
     @IBOutlet weak private var imageView: UIImageView!
     @IBOutlet weak private var textLabel: UILabel!
     @IBOutlet weak private var counterLabel: UILabel!
@@ -62,28 +62,28 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
             guard let gamesCount = statisticService?.gamesCount else {return}
             guard let bestGame = statisticService?.bestGame else {return}
             guard let totalAccuracy = statisticService?.totalAccuracy else {return}
-        let finalScreen = AlertModel(
-            title: "Этот раунд окончен!",
-            message: """
-            Ваш результат \(correctAnswers)/\(questionsAmount),
+            let finalScreen = AlertModel(
+                title: "Этот раунд окончен!",
+                message: """
+            Ваш результат \(correctAnswers)/\(questionsAmount)
             Количество сыгранных квизов: \(gamesCount)
-            Рекорд: \(bestGame.correct)/\(bestGame.total) \(bestGame.date.dateTimeString)
+            Рекорд: \(bestGame.correct)/\(bestGame.total) (\(bestGame.date.dateTimeString))
             Средняя точность: \(String(format: "%.2f", totalAccuracy))%
             """,
-            buttonText: "Сыграть еще раз",
-            completion: { [weak self] _ in
-            guard let self = self else { return }
-            self.currentQuestionIndex = 0
-            self.correctAnswers = 0
-            self.questionFactory?.requestNextQuestion()
-        })
+                buttonText: "Сыграть еще раз",
+                completion: { [weak self] _ in
+                    guard let self = self else { return }
+                    self.currentQuestionIndex = 0
+                    self.correctAnswers = 0
+                    self.questionFactory?.requestNextQuestion()
+                })
             alertPresenter?.showAlert(alertView: finalScreen)
         } else {
             currentQuestionIndex += 1
             questionFactory?.requestNextQuestion()
         }
     }
-
+    
     
     @IBAction func yesButtonClicked(_ sender: Any) {
         let givenAnswer = true
@@ -112,49 +112,49 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         alertPresenter = AlertPresenter(delegate: self)
         questionFactory?.requestNextQuestion()
         
-    // MARK: - JSON
+        // MARK: - JSON
         //print(NSHomeDirectory())
         var jsonURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let fileName = "inception.json"
         jsonURL.appendPathComponent(fileName)
         let jsonString = try? String(contentsOf: jsonURL)
-
+        
         func getMovie(from jsonString: String) -> Movie? {
             var movie: Movie? = nil
             /*    do {
-                guard let data = jsonString.data(using: .utf8) else {return nil}
-                let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                
-                guard let json = json,
-                      let id = json["id"] as? String,
-                      let title = json["title"] as? String,
-                      let jsonYear = json["year"] as? String,
-                      let year = Int(jsonYear),
-                      let image = json["image"] as? String,
-                      let releaseDate = json["releaseDate"] as? String,
-                      let jsonRuntimeMins = json["runtimeMins"] as? String,
-                      let runtimeMins = Int(jsonRuntimeMins),
-                      let directors = json["directors"] as? String,
-                      let actorList = json["actorList"] as? [Any] else {
-                    return nil
-                }
-                var actors: [Actor] = []
-                
-                for actor in actorList {
-                    guard let actor = actor as? [String: Any],
-                          let id = actor["id"] as? String,
-                          let image = actor["image"] as? String,
-                          let name = actor["name"] as? String,
-                          let asCharacter = actor["asCharacter"] as? String else {return nil}
-                    
-                    let mainActor = Actor(id: id, image: image, name: name, asCharacter: asCharacter)
-                    actors.append(mainActor)
-                }
-                movie = Movie(id: id, title: title, year: year, image: image, releaseDate: releaseDate, runtimeMins: runtimeMins, directors: directors, actorList: actors)
-            } catch {
-                print("Faild to parse: \(jsonString)")
-            }
-          return movie */
+             guard let data = jsonString.data(using: .utf8) else {return nil}
+             let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+             
+             guard let json = json,
+             let id = json["id"] as? String,
+             let title = json["title"] as? String,
+             let jsonYear = json["year"] as? String,
+             let year = Int(jsonYear),
+             let image = json["image"] as? String,
+             let releaseDate = json["releaseDate"] as? String,
+             let jsonRuntimeMins = json["runtimeMins"] as? String,
+             let runtimeMins = Int(jsonRuntimeMins),
+             let directors = json["directors"] as? String,
+             let actorList = json["actorList"] as? [Any] else {
+             return nil
+             }
+             var actors: [Actor] = []
+             
+             for actor in actorList {
+             guard let actor = actor as? [String: Any],
+             let id = actor["id"] as? String,
+             let image = actor["image"] as? String,
+             let name = actor["name"] as? String,
+             let asCharacter = actor["asCharacter"] as? String else {return nil}
+             
+             let mainActor = Actor(id: id, image: image, name: name, asCharacter: asCharacter)
+             actors.append(mainActor)
+             }
+             movie = Movie(id: id, title: title, year: year, image: image, releaseDate: releaseDate, runtimeMins: runtimeMins, directors: directors, actorList: actors)
+             } catch {
+             print("Faild to parse: \(jsonString)")
+             }
+             return movie */
             do {
                 guard let data = jsonString.data(using: .utf8) else {return nil}
                 let movie = try JSONDecoder().decode(Movie.self, from: data)
@@ -185,56 +185,56 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
  Настоящий рейтинг: 9,2
  Вопрос: Рейтинг этого фильма больше чем 6?
  Ответ: ДА
-
-
+ 
+ 
  Картинка: The Dark Knight
  Настоящий рейтинг: 9
  Вопрос: Рейтинг этого фильма больше чем 6?
  Ответ: ДА
-
-
+ 
+ 
  Картинка: Kill Bill
  Настоящий рейтинг: 8,1
  Вопрос: Рейтинг этого фильма больше чем 6?
  Ответ: ДА
-
-
+ 
+ 
  Картинка: The Avengers
  Настоящий рейтинг: 8
  Вопрос: Рейтинг этого фильма больше чем 6?
  Ответ: ДА
-
-
+ 
+ 
  Картинка: Deadpool
  Настоящий рейтинг: 8
  Вопрос: Рейтинг этого фильма больше чем 6?
  Ответ: ДА
-
-
+ 
+ 
  Картинка: The Green Knight
  Настоящий рейтинг: 6,6
  Вопрос: Рейтинг этого фильма больше чем 6?
  Ответ: ДА
-
-
+ 
+ 
  Картинка: Old
  Настоящий рейтинг: 5,8
  Вопрос: Рейтинг этого фильма больше чем 6?
  Ответ: НЕТ
-
-
+ 
+ 
  Картинка: The Ice Age Adventures of Buck Wild
  Настоящий рейтинг: 4,3
  Вопрос: Рейтинг этого фильма больше чем 6?
  Ответ: НЕТ
-
-
+ 
+ 
  Картинка: Tesla
  Настоящий рейтинг: 5,1
  Вопрос: Рейтинг этого фильма больше чем 6?
  Ответ: НЕТ
-
-
+ 
+ 
  Картинка: Vivarium
  Настоящий рейтинг: 5,8
  Вопрос: Рейтинг этого фильма больше чем 6?
