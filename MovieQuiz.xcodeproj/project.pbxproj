@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D1535A02A7FD98700AB35AE /* NetworkClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D15359F2A7FD98700AB35AE /* NetworkClient.swift */; };
 		5D1E6B2B2A6D965E00002D02 /* AlertPresenterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1E6B2A2A6D965E00002D02 /* AlertPresenterProtocol.swift */; };
 		5D1FD6592A63B95800CE4A9F /* QuestionFactoryDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1FD6582A63B95800CE4A9F /* QuestionFactoryDelegate.swift */; };
 		5D77E0D42A7574D3002BFF4F /* StatisticService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D77E0D32A7574D3002BFF4F /* StatisticService.swift */; };
@@ -33,6 +34,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5D15359F2A7FD98700AB35AE /* NetworkClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkClient.swift; sourceTree = "<group>"; };
 		5D1E6B2A2A6D965E00002D02 /* AlertPresenterProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenterProtocol.swift; sourceTree = "<group>"; };
 		5D1FD6582A63B95800CE4A9F /* QuestionFactoryDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionFactoryDelegate.swift; sourceTree = "<group>"; };
 		5D77E0D32A7574D3002BFF4F /* StatisticService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticService.swift; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 				5D1FD6582A63B95800CE4A9F /* QuestionFactoryDelegate.swift */,
 				5D1E6B2A2A6D965E00002D02 /* AlertPresenterProtocol.swift */,
 				5D77E0D32A7574D3002BFF4F /* StatisticService.swift */,
+				5D15359F2A7FD98700AB35AE /* NetworkClient.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -240,6 +243,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D1535A02A7FD98700AB35AE /* NetworkClient.swift in Sources */,
 				AD5EE5DE284D7887003966EF /* UIColor+Extensions.swift in Sources */,
 				5DE5939D2A69A17C003D03B5 /* AlertPresenter.swift in Sources */,
 				5DE5939B2A69A0CA003D03B5 /* AlertModel.swift in Sources */,
