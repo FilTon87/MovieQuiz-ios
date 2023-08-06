@@ -70,8 +70,6 @@ final class StatisticServiceImplementation: StatisticService {
         return (Double(correct) / Double(total)) * 100
     }
     
-    
-    
     var bestGame: GameRecord {
         get {
             guard let data = userDefaults.data(forKey: Keys.bestGame.rawValue),
@@ -88,6 +86,4 @@ final class StatisticServiceImplementation: StatisticService {
             userDefaults.set(data, forKey: Keys.bestGame.rawValue)
         }
     }
-    
-    
 }
