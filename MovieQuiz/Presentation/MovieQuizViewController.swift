@@ -47,6 +47,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         alertPresenter = AlertPresenter(delegate: self)
         showLoadingIndicator()
         questionFactory?.loadData()
+        presenter.viewController = self
     }
     
     private func showLoadingIndicator() {
@@ -78,7 +79,7 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         textLabel.text =   quizstep.question
     }
     
-    private func showAnswerResult(isCorrect: Bool) {
+    func showAnswerResult(isCorrect: Bool) {
         imageView.layer.masksToBounds = true
         imageView.layer.borderWidth = 8
         imageView.layer.cornerRadius = 20
@@ -124,74 +125,68 @@ final class MovieQuizViewController: UIViewController, QuestionFactoryDelegate {
         }
     }
     
-    @IBAction func yesButtonClicked(_ sender: Any) {
-        let givenAnswer = true
-        guard let currentQuestion = currentQuestion else { return }
-        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
-        yesButton.isEnabled = false
-        noButton.isEnabled = false
+    @IBAction func yesButtonClicked(_ sender: UIButton) {
+        presenter.currentQuestion = currentQuestion
+        presenter.yesButtonClicked()
     }
     
-    @IBAction func noButtonClicked(_ sender: Any) {
-        let givenAnswer = false
-        guard let currentQuestion = currentQuestion else { return }
-        showAnswerResult(isCorrect: givenAnswer == currentQuestion.correctAnswer)
-        yesButton.isEnabled = false
-        noButton.isEnabled = false
+    @IBAction func noButtonClicked(_ sender: UIButton) {
+        presenter.currentQuestion = currentQuestion
+        presenter.noButtonClicked()
     }
 }
-        /*       // MARK: - JSON
-         //print(NSHomeDirectory())
-         var jsonURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-         let fileName = "inception.json"
-         jsonURL.appendPathComponent(fileName)
-         let jsonString = try? String(contentsOf: jsonURL)
-         
-         func getMovie(from jsonString: String) -> Movie? {
-         var movie: Movie? = nil
-         do {
-         guard let data = jsonString.data(using: .utf8) else {return nil}
-         let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-         
-         guard let json = json,
-         let id = json["id"] as? String,
-         let title = json["title"] as? String,
-         let jsonYear = json["year"] as? String,
-         let year = Int(jsonYear),
-         let image = json["image"] as? String,
-         let releaseDate = json["releaseDate"] as? String,
-         let jsonRuntimeMins = json["runtimeMins"] as? String,
-         let runtimeMins = Int(jsonRuntimeMins),
-         let directors = json["directors"] as? String,
-         let actorList = json["actorList"] as? [Any] else {
-         return nil
-         }
-         var actors: [Actor] = []
-         
-         for actor in actorList {
-         guard let actor = actor as? [String: Any],
-         let id = actor["id"] as? String,
-         let image = actor["image"] as? String,
-         let name = actor["name"] as? String,
-         let asCharacter = actor["asCharacter"] as? String else {return nil}
-         
-         let mainActor = Actor(id: id, image: image, name: name, asCharacter: asCharacter)
-         actors.append(mainActor)
-         }
-         movie = Movie(id: id, title: title, year: year, image: image, releaseDate: releaseDate, runtimeMins: runtimeMins, directors: directors, actorList: actors)
-         } catch {
-         print("Faild to parse: \(jsonString)")
-         }
-         return movie
-         do {
-         guard let data = jsonString.data(using: .utf8) else {return nil}
-         let movie = try JSONDecoder().decode(Movie.self, from: data)
-         } catch {
-         print("Failed to parse: \(error.localizedDescription)")
-         }
-         return movie
-         }
-         } */
+/*       // MARK: - JSON
+ //print(NSHomeDirectory())
+ var jsonURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+ let fileName = "inception.json"
+ jsonURL.appendPathComponent(fileName)
+ let jsonString = try? String(contentsOf: jsonURL)
+ 
+ func getMovie(from jsonString: String) -> Movie? {
+ var movie: Movie? = nil
+ do {
+ guard let data = jsonString.data(using: .utf8) else {return nil}
+ let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+ 
+ guard let json = json,
+ let id = json["id"] as? String,
+ let title = json["title"] as? String,
+ let jsonYear = json["year"] as? String,
+ let year = Int(jsonYear),
+ let image = json["image"] as? String,
+ let releaseDate = json["releaseDate"] as? String,
+ let jsonRuntimeMins = json["runtimeMins"] as? String,
+ let runtimeMins = Int(jsonRuntimeMins),
+ let directors = json["directors"] as? String,
+ let actorList = json["actorList"] as? [Any] else {
+ return nil
+ }
+ var actors: [Actor] = []
+ 
+ for actor in actorList {
+ guard let actor = actor as? [String: Any],
+ let id = actor["id"] as? String,
+ let image = actor["image"] as? String,
+ let name = actor["name"] as? String,
+ let asCharacter = actor["asCharacter"] as? String else {return nil}
+ 
+ let mainActor = Actor(id: id, image: image, name: name, asCharacter: asCharacter)
+ actors.append(mainActor)
+ }
+ movie = Movie(id: id, title: title, year: year, image: image, releaseDate: releaseDate, runtimeMins: runtimeMins, directors: directors, actorList: actors)
+ } catch {
+ print("Faild to parse: \(jsonString)")
+ }
+ return movie
+ do {
+ guard let data = jsonString.data(using: .utf8) else {return nil}
+ let movie = try JSONDecoder().decode(Movie.self, from: data)
+ } catch {
+ print("Failed to parse: \(error.localizedDescription)")
+ }
+ return movie
+ }
+ } */
 
 /*
  // MARK: - Mock-данные
