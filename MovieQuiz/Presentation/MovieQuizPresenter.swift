@@ -28,7 +28,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     private var alertPresenter: AlertPresenterProtocol?
     
-    //MARK - QuestionFactoryDelegate
+    // MARK: - QuestionFactoryDelegate
     
     func didLoadDataFromServer() {
         viewController?.hideLoadingIndicator()
@@ -37,19 +37,6 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     func didFailToLoadData(with error: Error) {
         self.showNetworkError(message: error.localizedDescription)
-    }
-    
-    func showNetworkError(message: String) {
-        viewController?.hideLoadingIndicator()
-        let errorScreen = AlertModel(
-            title: "Ошибка",
-            message: message,
-            buttonText: "Попробовать ещё раз",
-            completion: { [weak self] _ in
-                guard let self = self else {return}
-                self.questionFactory?.loadData()
-            })
-        self.alertPresenter?.showAlert(alertView: errorScreen)
     }
     
     func isLastQuestion() -> Bool {
@@ -82,6 +69,49 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             self?.viewController?.show(quizstep: viewModel)
         }
     }
+        
+    func yesButtonClicked() {
+        didAnswer(isYes: true)
+    }
+    
+    func noButtonClicked() {
+        didAnswer(isYes: false)
+    }
+    private func didAnswer(isYes: Bool) {
+        guard let currentQuestion = currentQuestion else { return }
+        let givenAnswer = isYes
+        if givenAnswer == currentQuestion.correctAnswer {
+            self.proceedWithAnswer(isCorrect: true)
+            correctAnswers += 1
+        } else {
+            self.proceedWithAnswer(isCorrect: false)
+        }
+        viewController?.yesButton.isEnabled = false
+        viewController?.noButton.isEnabled = false
+    }
+    
+    func proceedWithAnswer(isCorrect: Bool) {
+        viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self = self else { return }
+            self.proceedToNextQuestionOrResults() }
+    }
+    
+    //MARK: - AlertPresenter
+    
+    func showNetworkError(message: String) {
+        viewController?.hideLoadingIndicator()
+        let errorScreen = AlertModel(
+            title: "Ошибка",
+            message: message,
+            buttonText: "Попробовать ещё раз",
+            completion: { [weak self] _ in
+                guard let self = self else {return}
+                self.questionFactory?.loadData()
+            })
+        self.alertPresenter?.showAlert(alertView: errorScreen)
+    }
     
     func proceedToNextQuestionOrResults() {
         viewController?.yesButton.isEnabled = true
@@ -111,33 +141,8 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             questionFactory?.requestNextQuestion()
         }
     }
-        
-    func yesButtonClicked() {
-        didAnswer(isYes: true)
-    }
     
-    func noButtonClicked() {
-        didAnswer(isYes: false)
-    }
-    private func didAnswer(isYes: Bool) {
-        guard let currentQuestion = currentQuestion else { return }
-        let givenAnswer = isYes
-        if givenAnswer == currentQuestion.correctAnswer {
-            self.proceedWithAnswer(isCorrect: true)
-            correctAnswers += 1
-        } else {
-            self.proceedWithAnswer(isCorrect: false)
-        }
-        viewController?.yesButton.isEnabled = false
-        viewController?.noButton.isEnabled = false
-    }
     
-    func proceedWithAnswer(isCorrect: Bool) {
-        viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-            guard let self = self else { return }
-            self.proceedToNextQuestionOrResults() }
-    }
+    
     
 }
