@@ -181,10 +181,10 @@
 		8F4738322848DE2A005DF65E /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				5DA419142A8E06C3003E295A /* MovieQuizPresenter.swift */,
 				AD1ABAB52831907B00B3E448 /* MovieQuizViewController.swift */,
 				5DE5939C2A69A17C003D03B5 /* AlertPresenter.swift */,
 				AD1ABAB72831907B00B3E448 /* Main.storyboard */,
-				5DA419142A8E06C3003E295A /* MovieQuizPresenter.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
