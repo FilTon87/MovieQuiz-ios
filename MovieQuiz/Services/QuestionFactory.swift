@@ -61,7 +61,7 @@ class QuestionFactory: QuestionFactoryProtocol {
             
             let rating = Float(movie.rating) ?? 0
             let comparisonWord = ["больше", "меньше"]
-            let questionComparisonWord = comparisonWord.randomElement()!
+            let questionComparisonWord = comparisonWord.randomElement() ?? "больше"
             let questionRating = (5...8).randomElement() ?? 0
             let text = "Рейтинг этого фильма \(questionComparisonWord) чем \(questionRating)?"
             let correctAnswer: Bool
