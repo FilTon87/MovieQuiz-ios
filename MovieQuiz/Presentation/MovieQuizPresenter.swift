@@ -11,18 +11,18 @@ import UIKit
 final class MovieQuizPresenter: QuestionFactoryDelegate {
     private var questionFactory: QuestionFactoryProtocol?
     private let statisticService: StatisticService!
-    private weak var viewController: MovieQuizViewController?
+    private weak var viewController: MovieQuizViewControllerProtocol?
     private let questionsAmount: Int = 10
     private var currentQuestionIndex: Int = 0
     private var currentQuestion: QuizQuestion?
     private var correctAnswers = 0
     
-    init(viewController: MovieQuizViewController) {
+    init(viewController: MovieQuizViewControllerProtocol) {
         self.viewController = viewController
         statisticService = StatisticServiceImplementation()
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         questionFactory?.loadData()
-        alertPresenter = AlertPresenter(delegate: viewController)
+        alertPresenter = AlertPresenter(delegate: viewController  as! UIViewController)
         viewController.showLoadingIndicator()
     }
     
@@ -86,8 +86,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         } else {
             self.proceedWithAnswer(isCorrect: false)
         }
-        viewController?.yesButton.isEnabled = false
-        viewController?.noButton.isEnabled = false
+        viewController?.disableButton()
     }
     
     func proceedWithAnswer(isCorrect: Bool) {
@@ -114,9 +113,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     }
     
     func proceedToNextQuestionOrResults() {
-        viewController?.yesButton.isEnabled = true
-        viewController?.noButton.isEnabled = true
-        viewController?.imageView.layer.borderWidth = 0
+        viewController?.showNextQuestion()
         if self.isLastQuestion() {
             statisticService?.store(correct: correctAnswers, total: self.questionsAmount)
             guard let gamesCount = statisticService?.gamesCount else {return}
@@ -141,8 +138,4 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             questionFactory?.requestNextQuestion()
         }
     }
-    
-    
-    
-    
 }
