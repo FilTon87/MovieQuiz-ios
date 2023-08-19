@@ -9,12 +9,13 @@ import Foundation
 import UIKit
 
 final class MovieQuizPresenter: QuestionFactoryDelegate {
-    private var questionFactory: QuestionFactoryProtocol?
     private let statisticService: StatisticService!
-    private weak var viewController: MovieQuizViewControllerProtocol?
     private let questionsAmount: Int = 10
-    private var currentQuestionIndex: Int = 0
+    private var questionFactory: QuestionFactoryProtocol?
     private var currentQuestion: QuizQuestion?
+    private weak var viewController: MovieQuizViewControllerProtocol?
+    private var alertPresenter = AlertPresenter()
+    private var currentQuestionIndex: Int = 0
     private var correctAnswers = 0
     
     init(viewController: MovieQuizViewControllerProtocol) {
@@ -22,11 +23,8 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         statisticService = StatisticServiceImplementation()
         questionFactory = QuestionFactory(moviesLoader: MoviesLoader(), delegate: self)
         questionFactory?.loadData()
-        alertPresenter = AlertPresenter(delegate: viewController  as! UIViewController)
         viewController.showLoadingIndicator()
     }
-    
-    private var alertPresenter: AlertPresenterProtocol?
     
     // MARK: - QuestionFactoryDelegate
     
@@ -69,7 +67,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
             self?.viewController?.show(quizstep: viewModel)
         }
     }
-        
+    
     func yesButtonClicked() {
         didAnswer(isYes: true)
     }
@@ -109,7 +107,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
                 guard let self = self else {return}
                 self.questionFactory?.loadData()
             })
-        self.alertPresenter?.showAlert(alertView: errorScreen)
+        alertPresenter.showAlert(in: viewController as! UIViewController, alertView: errorScreen)
     }
     
     func proceedToNextQuestionOrResults() {
@@ -132,7 +130,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
                     guard let self = self else { return }
                     self.restartGame()
                 })
-            alertPresenter?.showAlert(alertView: finalScreen)
+            alertPresenter.showAlert(in: viewController as! UIViewController, alertView: finalScreen)
         } else {
             self.switchToNextQuestion()
             questionFactory?.requestNextQuestion()

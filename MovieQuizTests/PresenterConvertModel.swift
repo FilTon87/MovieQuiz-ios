@@ -6,11 +6,10 @@
 //
 
 import Foundation
-import UIKit
 import XCTest
 @testable import MovieQuiz
 
-final class MovieQuizViewControllerMock: UIViewController, MovieQuizViewControllerProtocol {
+final class MovieQuizViewControllerMock: MovieQuizViewControllerProtocol {
     func showNextQuestion() {
         
     }
