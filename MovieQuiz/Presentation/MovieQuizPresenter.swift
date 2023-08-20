@@ -37,20 +37,6 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         self.showNetworkError(message: error.localizedDescription)
     }
     
-    func isLastQuestion() -> Bool {
-        currentQuestionIndex == questionsAmount - 1
-    }
-    
-    func restartGame() {
-        currentQuestionIndex = 0
-        correctAnswers = 0
-        questionFactory?.requestNextQuestion()
-    }
-    
-    func switchToNextQuestion() {
-        currentQuestionIndex += 1
-    }
-    
     func convert(model: QuizQuestion) -> QuizStepViewModel {
         let questionStep = QuizStepViewModel(
             image: UIImage(data: model.image) ?? UIImage(),
@@ -75,6 +61,23 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     func noButtonClicked() {
         didAnswer(isYes: false)
     }
+
+    //MARK: - Private func
+    
+    private func isLastQuestion() -> Bool {
+        currentQuestionIndex == questionsAmount - 1
+    }
+    
+    private func restartGame() {
+        currentQuestionIndex = 0
+        correctAnswers = 0
+        questionFactory?.requestNextQuestion()
+    }
+    
+    private func switchToNextQuestion() {
+        currentQuestionIndex += 1
+    }
+    
     private func didAnswer(isYes: Bool) {
         guard let currentQuestion = currentQuestion else { return }
         let givenAnswer = isYes
@@ -87,7 +90,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         viewController?.disableButton()
     }
     
-    func proceedWithAnswer(isCorrect: Bool) {
+    private func proceedWithAnswer(isCorrect: Bool) {
         viewController?.highlightImageBorder(isCorrectAnswer: isCorrect)
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
@@ -97,7 +100,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
     
     //MARK: - AlertPresenter
     
-    func showNetworkError(message: String) {
+    private func showNetworkError(message: String) {
         viewController?.hideLoadingIndicator()
         let errorScreen = AlertModel(
             title: "Ошибка",
@@ -110,7 +113,7 @@ final class MovieQuizPresenter: QuestionFactoryDelegate {
         alertPresenter.showAlert(in: viewController as! UIViewController, alertView: errorScreen)
     }
     
-    func proceedToNextQuestionOrResults() {
+    private func proceedToNextQuestionOrResults() {
         viewController?.showNextQuestion()
         if self.isLastQuestion() {
             statisticService?.store(correct: correctAnswers, total: self.questionsAmount)

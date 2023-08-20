@@ -21,7 +21,7 @@ final class MovieQuizViewController: UIViewController, MovieQuizViewControllerPr
         presenter = MovieQuizPresenter(viewController: self)
         imageView.layer.cornerRadius = 20
     }
-    // MARK: - Private functions
+    // MARK: - Functions
     func show(quizstep: QuizStepViewModel) {
         counterLabel.text = quizstep.questionNumber
         imageView.image = quizstep.image
