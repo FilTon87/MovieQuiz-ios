@@ -55,7 +55,7 @@ final class StatisticServiceImplementation: StatisticService {
     
     func store(correct count: Int, total amount: Int) {
         gamesCount += 1
-        if bestGame.correct < count {
+        if bestGame.correct <= count {
             bestGame = GameRecord(correct: count, total: amount, date: Date())
             correct = correct + count
             total = total + amount
